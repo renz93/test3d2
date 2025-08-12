@@ -44,7 +44,7 @@ sections.forEach(s => observer.observe(s));
 //Create a Three.JS Scene
 const scene = new THREE.Scene();
 //create a new camera with positions and angles
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 //Keep track of the mouse position, so we can make the gibal move
 let mouseX = window.innerWidth / 2;
@@ -82,7 +82,7 @@ loader.load(
 
 //Instantiate a new renderer and set its size
 const renderer = new THREE.WebGLRenderer({ alpha: true }); //Alpha: true allows for the transparent background
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(250,250);
 
 //Add the renderer to the DOM
 document.getElementById("container3D").appendChild(renderer.domElement);
