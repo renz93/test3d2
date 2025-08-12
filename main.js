@@ -44,7 +44,7 @@ sections.forEach(s => observer.observe(s));
 //Create a Three.JS Scene
 const scene = new THREE.Scene();
 //create a new camera with positions and angles
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
 
 //Keep track of the mouse position, so we can make the gibal move
 let mouseX = window.innerWidth / 2;
