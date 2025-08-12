@@ -1,0 +1,59 @@
+ :root{
+   --nav-height:60px;
+   --accent:#6c63ff;
+   --bg:#0f1724;
+   --fg:#e6eef8;
+ }
+ *{box-sizing:border-box}
+ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;background:var(--bg);color:var(--fg);scroll-behavior:smooth}
+
+/* top navigation */
+.nav{position:fixed;inset:0 0 auto 0;height:var(--nav-height);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);z-index:40}
+.nav .bar{width:100%;max-width:1100px;display:flex;gap:12px;padding:10px 16px;align-items:center}
+.logo{font-weight:700;letter-spacing:0.4px}
+.nav-buttons{margin-left:auto;display:flex;gap:8px}
+.btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:10px 14px;border-radius:999px;color:var(--fg);cursor:pointer;transition:all .2s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+.btn.primary{background:linear-gradient(90deg,var(--accent),#9f7cff);border:none}
+
+main{margin-top:var(--nav-height)}
+
+/* sections */
+section{min-height:100vh;display:grid;place-items:center;padding:64px 20px;position:relative;overflow:hidden}
+.section-inner{max-width:1100px;width:100%;display:flex;gap:40px;align-items:center}
+.content{flex:1}
+h1{font-size:clamp(28px,6vw,56px);margin:0 0 12px}
+p.lead{font-size:1.05rem;opacity:0.9;max-width:48ch}
+
+/* parallax layers */
+.parallax-layer{position:absolute;inset:0;pointer-events:none}
+.parallax-layer .shape{position:absolute;will-change:transform;opacity:0.18}
+
+/* different background visuals for sections */
+#home{background:linear-gradient(180deg,#071029 0%, #071a2b 100%)}
+#profile{background:linear-gradient(180deg,#081521 0%, #0b2432 100%)}
+#portfolio{background:linear-gradient(180deg,#08111c 0%, #0c1a2a 100%)}
+#contact{background:linear-gradient(180deg,#041018 0%, #002029 100%)}
+
+/* canvas area for three.js */
+.three-wrap{flex:1;min-height:420px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);box-shadow:inset 0 -40px 80px rgba(0,0,0,0.6)}
+canvas#three-canvas{display:block;width:100%;height:100%;}
+
+/* simple responsive layout */
+@media (max-width:900px){.section-inner{flex-direction:column-reverse}.nav .bar{padding:8px}.logo{font-size:14px}}
+
+/*three dimension gigi balang
+#container3D{
+position:fixed;
+inset: 0;
+z-index: 100;
+pointer-events: none;
+}*/
+
+#container3D canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
