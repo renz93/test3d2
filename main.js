@@ -1,9 +1,9 @@
 //Import the THREE.js library
-import * as THREE from "https://cdn.skypack.dev/three@0.155.0/build/three.module.js";
+import * as THREE from "https://cdn.skypack.dev/three@0.149.0/build/three.module.js";
 // To allow for the camera to move around the scene
-import { OrbitControls } from "https://cdn.skypack.dev/three@0.155.0/examples/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "https://cdn.skypack.dev/three@0.149.0/examples/jsm/controls/OrbitControls.js";
 // To allow for importing the .gltf file
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.155.0/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFLoader } from "https://cdn.skypack.dev/three@0.149.0/examples/jsm/loaders/GLTFLoader.js";
 
 // --- Smooth nav button scrolling ---
 document.querySelectorAll('.nav-buttons .btn').forEach(btn => {
@@ -42,72 +42,94 @@ const observer = new IntersectionObserver(entries => {
 sections.forEach(s => observer.observe(s));
 
 //Create a Three.JS Scene
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
-  camera.position.z = 3;
+const scene = new THREE.Scene();
+//create a new camera with positions and angles
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
 
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
+//Keep track of the mouse position, so we can make the gibal move
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
 
-  let object;
-  let controls;
-  const objToRender = 'gibal';
+//Keep the 3D object on a global variable so we can access it later
+let object;
 
-  const loader = new GLTFLoader();
-  loader.load(
-    `./models/${objToRender}/scene.gltf`,
-    (gltf) => {
-      object = gltf.scene;
+//OrbitControls allow the camera to move around the scene
+let controls;
 
-      // Scale so height ≈ 250px in our 250px container
-      const box = new THREE.Box3().setFromObject(object);
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      const scaleFactor = 2 / size.y; // adjust as needed
-      object.scale.setScalar(scaleFactor);
+//Set which object to render
+let objToRender = 'gibal';
 
-      // Center the model
-      box.setFromObject(object);
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      object.position.sub(center);
+//Instantiate a loader for the .gltf file
+const loader = new GLTFLoader();
 
-      scene.add(object);
-    },
-    (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
-    (error) => console.error(error)
-  );
-
-  const renderer = new THREE.WebGLRenderer({ alpha: true });
-  renderer.setSize(250, 250);
-  document.getElementById("container3D").appendChild(renderer.domElement);
-
-  const topLight = new THREE.DirectionalLight(0xffffff, 1);
-  topLight.position.set(5, 5, 5);
-  topLight.castShadow = true;
-  scene.add(topLight);
-
-  const ambientLight = new THREE.AmbientLight(0x333333, 2);
-  scene.add(ambientLight);
-
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableZoom = false; // disable scroll zoom
-  controls.enablePan = false;  // disable panning
-  controls.minPolarAngle = Math.PI / 2.5;
-  controls.maxPolarAngle = Math.PI / 1.8;
-
-  function animate() {
-    requestAnimationFrame(animate);
-    if (object) {
-      object.rotation.y = -3 + mouseX / window.innerWidth * 3;
-      object.rotation.x = -1.2 + mouseY * 2.5 / window.innerHeight;
-    }
-    renderer.render(scene, camera);
+//Load the file
+loader.load(
+  `./models/${objToRender}/scene.gltf`,
+  function (gltf) {
+    //If the file is loaded, add it to the scene
+    object = gltf.scene;
+    scene.add(object);
+  },
+  function (xhr) {
+    //While it is loading, log the progress
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  },
+  function (error) {
+    //If there is an error, log it
+    console.error(error);
   }
+);
 
-  document.onmousemove = (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  };
+//Instantiate a new renderer and set its size
+const renderer = new THREE.WebGLRenderer({ alpha: true }); //Alpha: true allows for the transparent background
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-  animate();
+//Add the renderer to the DOM
+document.getElementById("container3D").appendChild(renderer.domElement);
+
+//Set how far the camera will be from the 3D model
+camera.position.z = objToRender === "gibal" ? 25 : 500;
+
+//Add lights to the scene, so we can actually see the 3D model
+const topLight = new THREE.DirectionalLight(0xffffff, 1); // (color, intensity)
+topLight.position.set(500, 500, 500) //top-left-ish
+topLight.castShadow = true;
+scene.add(topLight);
+
+const ambientLight = new THREE.AmbientLight(0x333333, objToRender === "gibal" ? 5 : 1);
+scene.add(ambientLight);
+
+//This adds controls to the camera, so we can rotate / zoom it with the mouse
+if (objToRender === "gibal") {
+  controls = new OrbitControls(camera, renderer.domElement);
+}
+
+//Render the scene
+function animate() {
+  requestAnimationFrame(animate);
+  //Here we could add some code to update the scene, adding some automatic movement
+
+  //Make the gibal move
+  if (object && objToRender === "gibal") {
+    //I've played with the constants here until it looked good 
+    object.rotation.y = -3 + mouseX / window.innerWidth * 3;
+    object.rotation.x = -1.2 + mouseY * 2.5 / window.innerHeight;
+  }
+  renderer.render(scene, camera);
+}
+
+//Add a listener to the window, so we can resize the window and the camera
+window.addEventListener("resize", function () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+//add mouse position listener, so we can make the gibal move
+document.onmousemove = (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+}
+
+//Start the 3D rendering
+animate();
